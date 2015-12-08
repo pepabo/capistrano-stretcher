@@ -1,0 +1,28 @@
+src: <%= src %>
+checksum: <%= checksum %>
+dest: <%= fetch(:deploy_to) %>/releases/<%= env.now %>
+commands:
+  pre:
+    <% hooks["pre"].each do |c| %>
+    - <%= c %>
+    <% end %>
+  post:
+    - ln -nfs <%= fetch(:deploy_to) %>/releases/<%= env.now %> <%= fetch(:deploy_to) %>/current
+    - rm -rf <%= fetch(:deploy_to) %>/current/log
+    - ln -nfs <%= fetch(:deploy_to) %>/shared/log <%= fetch(:deploy_to) %>/current/log
+    - mkdir -p <%= fetch(:deploy_to) %>/current/tmp
+    - ln -nfs <%= fetch(:deploy_to) %>/shared/pids <%= fetch(:deploy_to) %>/current/tmp/pids
+    <% hooks["post"].each do |c| %>
+    - <%= c %>
+    <% end %>
+  success:
+    <% hooks["success"].each do |c| %>
+    - <%= c %>
+    <% end %>
+  failure:
+    <% hooks["failure"].each do |c| %>
+    - <%= c %>
+    <% end %>
+excludes:
+  - "*.pid"
+  - "*.socket"
