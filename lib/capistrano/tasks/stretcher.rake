@@ -100,7 +100,7 @@ namespace :stretcher do
         failure_message = "Deploy failed at *$(hostname)* :fire:"
         checksum = capture("openssl sha256 #{local_tarball_path}/current/#{fetch(:local_tarball_name)} | gawk -F' ' '{print $2}'").chomp
         src = fetch(:stretcher_src)
-        template = File.read(File.join(Gem.loaded_specs["capistrano-stretcher"], "capistrano/templates/manifest.yml.erb"))
+        template = File.read(File.join(Gem.loaded_specs["capistrano-stretcher"].full_require_paths[0], "capistrano/templates/manifest.yml.erb"))
         yaml = YAML.load(ERB.new(capture(:cat, "#{local_build_path}/#{fetch(:stretcher_hooks)}")).result(binding))
         fetch(:deploy_roles).split(',').each do |role|
           hooks = yaml[role]
