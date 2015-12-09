@@ -35,7 +35,7 @@ target server build assets, upload assets to AWS S3 and invoke `consul event` au
 
 ## Usage
 
-You need to add `config/deploy.rb` following variables:
+You need to add `require "capistrano/stretcher" to Capfile` and add `config/deploy.rb` following variables:
 
 ```
 role :build, ['your-target-server.lan'], :no_release => true
@@ -80,7 +80,6 @@ and invoke
  * `consul event -name deploy_batch_staging s3://.../manifest_batch.yml`
 
 with `cap staging stretcher:deploy` command on target server.
-
 
 ## Development
 
