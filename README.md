@@ -71,8 +71,8 @@ batch:
 
 above hooks is extracted to manifest.yml for stretcher. If you have "www,batch" roles and stages named staging and production, capistrano-stretcher extract to following yaml from configuration.
 
- * manifest_www.yml
- * manifest_batch.yml
+ * `manifest_www.yml`
+ * `manifest_batch.yml`
 
 and invoke
 
