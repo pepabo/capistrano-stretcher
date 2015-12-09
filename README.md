@@ -79,7 +79,7 @@ and invoke
  * `consul event -name deploy_www_staging s3://.../manifest_www.yml`
  * `consul event -name deploy_batch_staging s3://.../manifest_batch.yml`
 
- with `cap staging stretcher:deploy` command on target server.
+with `cap staging stretcher:deploy` command on target server.
 
 
 ## Development
