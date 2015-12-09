@@ -41,11 +41,46 @@ You need to add `config/deploy.rb` following variables:
 role :build, ['your-target-server.lan'], :no_release => true
 
 set :application, 'your-application'
+set :deploy_roles, 'www,batch'
 set :stretcher_hooks, 'config/stretcher.yml.erb'
 set :local_tarball_name, 'rails-applicaiton.tar.gz'
 set :stretcher_src, "s3://your-deployment-bucket/assets/rails-application-#{env.now}.tgz"
 set :manifest_path, "s3://your-deployment-bucket/manifests/"
 ```
+
+and write hooks for stretcher to `config/stretcher.yml.erb`
+
+```yaml
+default: &default
+  pre:
+    -
+  success:
+    -
+  failure:
+    - cat >> /tmp/failure
+www:
+  <<: *default
+  post:
+    - ln -nfs <%= fetch(:deploy_to) %>/shared/data <%= fetch(:deploy_to) %>/current/data
+    - sudo systemctl reload unicorn
+batch:
+  <<: *default
+  post:
+    - ln -nfs <%= fetch(:deploy_to) %>/shared/data <%= fetch(:deploy_to) %>/current/data
+```
+
+above hooks is extracted to manifest.yml for stretcher. If you have "www,batch" roles and stages named staging and production, capistrano-stretcher extract to following yaml from configuration.
+
+ * manifest_www.yml
+ * manifest_batch.yml
+
+and invoke
+
+ * `consul event -name deploy_www_staging s3://.../manifest_www.yml`
+ * `consul event -name deploy_batch_staging s3://.../manifest_batch.yml`
+
+ with `cap staging stretcher:deploy` command on target server.
+
 
 ## Development
 
