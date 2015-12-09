@@ -1,8 +1,6 @@
 # Capistrano::Stretcher
 
-Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/capistrano/stretcher`. To experiment with that code, run `bin/console` for an interactive prompt.
-
-TODO: Delete this and the text above, and describe your gem
+capistrano task for stretcher.
 
 ## Installation
 
@@ -20,9 +18,34 @@ Or install it yourself as:
 
     $ gem install capistrano-stretcher
 
+## Requirements
+
+capistrano-stretcher requires target server for building to application assets. this server should be installed folloing packages:
+
+ * git
+ * rsync
+ * tar
+ * gzip
+ * awk
+ * openssl
+ * aws-cli
+ * consul
+
+target server build assets, upload assets to AWS S3 and invoke `consul event` automatically. so target server can access AWS s3 via aws-cli and join your deployment consul cluster.
+
 ## Usage
 
-TODO: Write usage instructions here
+You need to add `config/deploy.rb` following variables:
+
+```
+role :build, ['your-target-server.lan'], :no_release => true
+
+set :application, 'your-application'
+set :stretcher_hooks, 'config/stretcher.yml.erb'
+set :local_tarball_name, 'rails-applicaiton.tar.gz'
+set :stretcher_src, "s3://your-deployment-bucket/assets/rails-application-#{env.now}.tgz"
+set :manifest_path, "s3://your-deployment-bucket/manifests/"
+```
 
 ## Development
 
@@ -32,5 +55,4 @@ To install this gem onto your local machine, run `bundle exec rake install`. To 
 
 ## Contributing
 
-Bug reports and pull requests are welcome on GitHub at https://github.com/[USERNAME]/capistrano-stretcher.
-
+Bug reports and pull requests are welcome on GitHub at https://github.com/pepabo/capistrano-stretcher.
