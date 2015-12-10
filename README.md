@@ -43,8 +43,8 @@ set :application, 'your-application'
 set :deploy_to, '/var/www'
 set :deploy_roles, 'www,batch'
 set :stretcher_hooks, 'config/stretcher.yml.erb'
-set :local_tarball_name, 'npm-applicaiton.tar.gz'
-set :stretcher_src, "s3://your-deployment-bucket/assets/npm-application-#{env.now}.tgz"
+set :local_tarball_name, 'rails-applicaiton.tar.gz'
+set :stretcher_src, "s3://your-deployment-bucket/assets/rails-application-#{env.now}.tgz"
 set :manifest_path, "s3://your-deployment-bucket/manifests/"
 ```
 
