@@ -20,7 +20,7 @@ Or install it yourself as:
 
 ## Requirements
 
-capistrano-stretcher requires target server for building to application assets. this server should be installed folloing packages:
+capistrano-stretcher requires target server for building to application assets. This server should be installed the following packages:
 
  * git
  * rsync
@@ -31,13 +31,13 @@ capistrano-stretcher requires target server for building to application assets. 
  * aws-cli
  * consul
 
-target server build assets, upload assets to AWS S3 and invoke `consul event` automatically. so target server can access AWS s3 via aws-cli and join your deployment consul cluster.
+target server builds assets, uploads assets to AWS S3 and invokes `consul event` automatically. So target server can access AWS s3 via aws-cli and join your deployment consul cluster.
 
 ## Usage
 
 You need to add `require "capistrano/stretcher"` to Capfile and add `config/deploy.rb` following variables:
 
-```
+```ruby
 role :build, ['your-target-server.lan'], :no_release => true
 set :application, 'your-application'
 set :deploy_to, '/var/www'
