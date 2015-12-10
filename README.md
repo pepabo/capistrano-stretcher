@@ -79,7 +79,7 @@ and invoke
  * `consul event -name deploy_www_staging s3://.../manifest_www.yml`
  * `consul event -name deploy_batch_staging s3://.../manifest_batch.yml`
 
-with `cap staging stretcher:deploy` command on target server. When it's invoked with `cap production stretcher:deploy`, capistrano-strecher replace suffix `staging` to `production`.
+with `cap staging stretcher:deploy` command on target server. When it's invoked with `cap production stretcher:deploy`, capistrano-stretcher replace suffix `staging` to `production`.
 
 ## Development
 
