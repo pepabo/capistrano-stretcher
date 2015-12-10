@@ -71,15 +71,15 @@ batch:
 
 above hooks is extracted to manifest.yml for stretcher. If you have "www,batch" roles and stages named staging and production, capistrano-stretcher extract to following yaml from configuration.
 
- * `manifest_www.yml`
- * `manifest_batch.yml`
+ * `manifest_www_staging.yml`
+ * `manifest_batch_staging.yml`
 
 and invoke
 
  * `consul event -name deploy_www_staging s3://.../manifest_www.yml`
  * `consul event -name deploy_batch_staging s3://.../manifest_batch.yml`
 
-with `cap staging stretcher:deploy` command on target server.
+with `cap staging stretcher:deploy` command on target server. When it's invoked with `cap production stretcher:deploy`, capistrano-strecher replace suffix `staging` to `production`.
 
 ## Development
 
