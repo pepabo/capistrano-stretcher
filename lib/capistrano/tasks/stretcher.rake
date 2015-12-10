@@ -109,8 +109,8 @@ namespace :stretcher do
             t.write yml
             t.path
           end
-          upload! tempfile_path, "#{local_tarball_path}/current/manifest_#{role}.yml"
-          execute :aws, :s3, :cp, "#{local_tarball_path}/current/manifest_#{role}.yml", "#{fetch(:manifest_path)}/manifest_#{role}.yml"
+          upload! tempfile_path, "#{local_tarball_path}/current/manifest_#{role}_#{fetch(:stage)}.yml"
+          execute :aws, :s3, :cp, "#{local_tarball_path}/current/manifest_#{role}_#{fetch(:stage)}.yml", "#{fetch(:manifest_path)}/manifest_#{role}_#{fetch(:stage)}.yml"
         end
       end
     end
@@ -142,7 +142,7 @@ namespace :stretcher do
       on application_builder_roles do
         opts = ["-name deploy_#{target_role}_#{fetch(:stage)}"]
         opts << "-node #{ENV['TARGET_HOSTS']}" if ENV['TARGET_HOSTS']
-        opts << "#{fetch(:manifest_path)}/manifest_#{target_role}.yml"
+        opts << "#{fetch(:manifest_path)}/manifest_#{target_role}_#{fetch(:stage)}.yml"
         execute :consul, :event, *opts
       end
     end
