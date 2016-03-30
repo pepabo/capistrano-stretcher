@@ -29,6 +29,10 @@ namespace :stretcher do
     roles(fetch(:application_builder_roles, [:build]))
   end
 
+  def consul_roles
+    roles(fetch(:consul_roles, [:consul]))
+  end
+
   task :mark_deploying do
     set :deploying, true
   end
@@ -139,7 +143,7 @@ namespace :stretcher do
   desc "Kick the stretcher's deploy event via Consul"
   task :kick_stretcher do
     fetch(:deploy_roles).split(',').each do |target_role|
-      on application_builder_roles do
+      on consul_roles do
         opts = ["-name deploy_#{target_role}_#{fetch(:stage)}"]
         opts << "-node #{ENV['TARGET_HOSTS']}" if ENV['TARGET_HOSTS']
         opts << "#{fetch(:manifest_path)}/manifest_#{target_role}_#{fetch(:stage)}.yml"
