@@ -39,6 +39,12 @@ You need to add `require "capistrano/stretcher"` to Capfile and add `config/depl
 
 ```ruby
 role :build, ['your-target-server.lan'], :no_release => true
+
+# If your build server is accessible to consul cluster, then set the same server
+# If different, set a server that can access consul cluster
+# just to kick consul event!
+role :consul, ['your-target-server.lan'], :no_release => true
+
 set :application, 'your-application'
 set :deploy_to, '/var/www'
 set :deploy_roles, 'www,batch'
