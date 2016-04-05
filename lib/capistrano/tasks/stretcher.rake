@@ -2,9 +2,14 @@
 require 'erb'
 require 'yaml'
 
-namespace :stretcher do
-  set :exclude_dirs, ['tmp']
+namespace :load do
+  task :defaults do
+    set :exclude_dirs, ["tmp"]
+    set :gzip_compression, "-9"
+  end
+end
 
+namespace :stretcher do
   def local_working_path_base
     @_local_working_path_base ||= fetch(:local_working_path_base, "/var/tmp/#{fetch :application}")
   end
@@ -67,7 +72,7 @@ namespace :stretcher do
         execute :echo, fetch(:current_revision), "> #{local_checkout_path}/#{env.now}/REVISION"
 
         execute :rsync, "-av", "--delete",
-          *fetch(:exclude_dirs).map{|d| ['--exclude', d].join(' ')},
+          *fetch(:exclude_dirs, ["tmp"]).map{|d| ['--exclude', d].join(' ')},
           "#{local_checkout_path}/#{env.now}/", "#{local_build_path}/",
           "| pv -l -s $( find #{local_checkout_path}/#{env.now}/ -type f | wc -l ) >/dev/null"
       end
@@ -77,11 +82,12 @@ namespace :stretcher do
   task :create_tarball do
     on application_builder_roles do
       within local_build_path do
+        compress_level = fetch(:gzip_compression, "-9")
         execute :mkdir, '-p', "#{local_tarball_path}/#{env.now}"
         execute :tar, '-cf', '-',
           "--exclude tmp", "--exclude spec", "./",
           "| pv -s $( du -sb ./ | awk '{print $1}' )",
-          "| gzip -9 > #{local_tarball_path}/#{env.now}/#{fetch(:local_tarball_name)}"
+          "| gzip #{compress_level} > #{local_tarball_path}/#{env.now}/#{fetch(:local_tarball_name)}"
       end
       within local_tarball_path do
         execute :rm, '-f', 'current'
