@@ -4,12 +4,13 @@ require 'yaml'
 
 namespace :load do
   task :defaults do
-    set :exclude_dirs, ["tmp"]
     set :gzip_compression, "-9"
   end
 end
 
 namespace :stretcher do
+  set :exclude_dirs, ["tmp"]
+
   def local_working_path_base
     @_local_working_path_base ||= fetch(:local_working_path_base, "/var/tmp/#{fetch :application}")
   end
