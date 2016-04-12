@@ -52,6 +52,8 @@ set :stretcher_hooks, 'config/stretcher.yml.erb'
 set :local_tarball_name, 'rails-applicaiton.tar.gz'
 set :stretcher_src, "s3://your-deployment-bucket/assets/rails-application-#{env.now}.tgz"
 set :manifest_path, "s3://your-deployment-bucket/manifests/"
+# Optional, if you want to use mv
+set :stretcher_sync_strategy, "mv"
 ```
 
 and write hooks for stretcher to `config/stretcher.yml.erb`
