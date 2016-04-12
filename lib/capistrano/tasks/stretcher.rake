@@ -4,7 +4,7 @@ require 'yaml'
 
 namespace :load do
   task :defaults do
-    set :gzip_compression, "-9"
+    set :gzip_compress_level, "-9"
   end
 end
 
@@ -83,7 +83,7 @@ namespace :stretcher do
   task :create_tarball do
     on application_builder_roles do
       within local_build_path do
-        compress_level = fetch(:gzip_compression, "-9")
+        compress_level = fetch(:gzip_compress_level, "-9")
         execute :mkdir, '-p', "#{local_tarball_path}/#{env.now}"
         execute :tar, '-cf', '-',
           "--exclude tmp", "--exclude spec", "./",
