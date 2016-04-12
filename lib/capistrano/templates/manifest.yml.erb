@@ -26,6 +26,6 @@ commands:
 excludes:
   - "*.pid"
   - "*.socket"
-<% if strategy = fetch(:sync_strategy, false) %>
+<% if strategy = fetch(:stretcher_sync_strategy, false) %>
 sync_strategy: <%= strategy %>
 <% end %>
