@@ -30,6 +30,7 @@ capistrano-stretcher requires target server for building to application assets. 
  * openssl
  * aws-cli
  * consul
+ * pv
 
 target server builds assets, uploads assets to AWS S3 and invokes `consul event` automatically. So target server can access AWS s3 via aws-cli and join your deployment consul cluster.
 
