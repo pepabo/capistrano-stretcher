@@ -39,6 +39,17 @@ namespace :stretcher do
     roles(fetch(:consul_roles, [:consul]))
   end
 
+  # upload to resource server with rsync
+  def upload_resource(local_src_path, remote_dst_path)
+    rsync_ssh_command = "ssh"
+    rsync_ssh_command << " " + fetch(:rsync_ssh_option) if fetch(:rsync_ssh_option)
+    rsync_ssh_user = fetch(:rsync_ssh_user) { capture(:whoami).strip }
+
+    execute :rsync, "-ave", %Q("#{rsync_ssh_command}"),
+            local_src_path,
+            "#{rsync_ssh_user}@#{fetch(:rsync_host)}:#{remote_dst_path}"
+  end
+
   task :mark_deploying do
     set :deploying, true
   end
@@ -100,7 +111,13 @@ namespace :stretcher do
   task :upload_tarball do
     on application_builder_roles do
       as 'root' do
-        execute :aws, :s3, :cp, "#{local_tarball_path}/current/#{fetch(:local_tarball_name)}", fetch(:stretcher_src)
+        if fetch(:stretcher_src).start_with?("s3://")
+          # upload to s3
+          execute :aws, :s3, :cp, "#{local_tarball_path}/current/#{fetch(:local_tarball_name)}", fetch(:stretcher_src)
+        else
+          # upload to resource server with rsync
+          upload_resource("#{local_tarball_path}/current/#{fetch(:local_tarball_name)}", fetch(:rsync_stretcher_src_path))
+        end
       end
     end
   end
@@ -121,7 +138,15 @@ namespace :stretcher do
             t.path
           end
           upload! tempfile_path, "#{local_tarball_path}/current/manifest_#{role}_#{fetch(:stage)}.yml"
-          execute :aws, :s3, :cp, "#{local_tarball_path}/current/manifest_#{role}_#{fetch(:stage)}.yml", "#{fetch(:manifest_path)}/manifest_#{role}_#{fetch(:stage)}.yml"
+
+          if fetch(:manifest_path).start_with?("s3://")
+            # upload to s3
+            execute :aws, :s3, :cp, "#{local_tarball_path}/current/manifest_#{role}_#{fetch(:stage)}.yml", "#{fetch(:manifest_path)}/manifest_#{role}_#{fetch(:stage)}.yml"
+          else
+            # upload to resource server with rsync
+            execute :chmod, "644", "#{local_tarball_path}/current/manifest_#{role}_#{fetch(:stage)}.yml"
+            upload_resource("#{local_tarball_path}/current/manifest_#{role}_#{fetch(:stage)}.yml", "#{fetch(:rsync_manifest_path)}/manifest_#{role}_#{fetch(:stage)}.yml")
+          end
         end
       end
     end
