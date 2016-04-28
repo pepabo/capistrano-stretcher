@@ -34,6 +34,8 @@ capistrano-stretcher requires target server for building to application assets. 
 
 target server builds assets, uploads assets to AWS S3 and invokes `consul event` automatically. So target server can access AWS s3 via aws-cli and join your deployment consul cluster.
 
+If you want to use non-s3 (e.g. private DC), upload assets to your server with rsync and download from http(s).
+
 ## Usage
 
 You need to add `require "capistrano/stretcher"` to Capfile and add `config/deploy.rb` following variables:
@@ -55,6 +57,13 @@ set :stretcher_src, "s3://your-deployment-bucket/assets/rails-application-#{env.
 set :manifest_path, "s3://your-deployment-bucket/manifests/"
 # Optional, if you want to use mv
 set :stretcher_sync_strategy, "mv"
+
+# Optinal, if you want to http(s) in stretcher_src, manifest_path
+set :rsync_ssh_option, "-p 22"
+set :rsync_ssh_user, "MY_USER" # if undefined, use current user on build server
+set :rsync_host, "xxx.xxx.xxx.xxx"
+set :rsync_stretcher_src_path, "/var/www/resource/assets/rails-application-#{env.now}.tgz"
+set :rsync_manifest_path,      "/var/www/resource/manifests"
 ```
 
 and write hooks for stretcher to `config/stretcher.yml.erb`
