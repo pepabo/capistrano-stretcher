@@ -111,12 +111,14 @@ namespace :stretcher do
   task :upload_tarball do
     on application_builder_roles do
       as 'root' do
+        local_tarball_file = "#{local_tarball_path}/current/#{fetch(:local_tarball_name)}"
+
         if fetch(:stretcher_src).start_with?("s3://")
           # upload to s3
-          execute :aws, :s3, :cp, "#{local_tarball_path}/current/#{fetch(:local_tarball_name)}", fetch(:stretcher_src)
+          execute :aws, :s3, :cp, local_tarball_file, fetch(:stretcher_src)
         else
           # upload to resource server with rsync
-          upload_resource("#{local_tarball_path}/current/#{fetch(:local_tarball_name)}", fetch(:rsync_stretcher_src_path))
+          upload_resource(local_tarball_file, fetch(:rsync_stretcher_src_path))
         end
       end
     end
@@ -137,15 +139,18 @@ namespace :stretcher do
             t.write yml
             t.path
           end
-          upload! tempfile_path, "#{local_tarball_path}/current/manifest_#{role}_#{fetch(:stage)}.yml"
+
+          local_manifest_file = "#{local_tarball_path}/current/manifest_#{role}_#{fetch(:stage)}.yml"
+
+          upload! tempfile_path, local_manifest_file
 
           if fetch(:manifest_path).start_with?("s3://")
             # upload to s3
-            execute :aws, :s3, :cp, "#{local_tarball_path}/current/manifest_#{role}_#{fetch(:stage)}.yml", "#{fetch(:manifest_path)}/manifest_#{role}_#{fetch(:stage)}.yml"
+            execute :aws, :s3, :cp, local_manifest_file, "#{fetch(:manifest_path)}/manifest_#{role}_#{fetch(:stage)}.yml"
           else
             # upload to resource server with rsync
-            execute :chmod, "644", "#{local_tarball_path}/current/manifest_#{role}_#{fetch(:stage)}.yml"
-            upload_resource("#{local_tarball_path}/current/manifest_#{role}_#{fetch(:stage)}.yml", "#{fetch(:rsync_manifest_path)}/manifest_#{role}_#{fetch(:stage)}.yml")
+            execute :chmod, "644", local_manifest_file
+            upload_resource(local_manifest_file, "#{fetch(:rsync_manifest_path)}/manifest_#{role}_#{fetch(:stage)}.yml")
           end
         end
       end
