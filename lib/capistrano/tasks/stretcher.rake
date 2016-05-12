@@ -39,6 +39,11 @@ namespace :stretcher do
     roles(fetch(:consul_roles, [:consul]))
   end
 
+  # upload to s3
+  def upload_s3(local_src_path, remote_dst_path)
+    execute :aws, :s3, :cp, local_src_path, remote_dst_path
+  end
+
   # upload to resource server with rsync
   def upload_resource(local_src_path, remote_dst_path)
     rsync_ssh_command = "ssh"
@@ -115,7 +120,7 @@ namespace :stretcher do
 
         if fetch(:stretcher_src).start_with?("s3://")
           # upload to s3
-          execute :aws, :s3, :cp, local_tarball_file, fetch(:stretcher_src)
+          upload_s3(local_tarball_file, fetch(:stretcher_src))
         else
           # upload to resource server with rsync
           upload_resource(local_tarball_file, fetch(:rsync_stretcher_src_path))
@@ -146,7 +151,7 @@ namespace :stretcher do
 
           if fetch(:manifest_path).start_with?("s3://")
             # upload to s3
-            execute :aws, :s3, :cp, local_manifest_file, "#{fetch(:manifest_path)}/manifest_#{role}_#{fetch(:stage)}.yml"
+            upload_s3(local_manifest_file, "#{fetch(:manifest_path)}/manifest_#{role}_#{fetch(:stage)}.yml")
           else
             # upload to resource server with rsync
             execute :chmod, "644", local_manifest_file
