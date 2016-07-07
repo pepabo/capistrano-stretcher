@@ -4,7 +4,8 @@ require 'yaml'
 
 namespace :load do
   task :defaults do
-    set :gzip_compress_level, ""
+    set :gzip_archiver, "gzip"
+    set :gzip_archiver_option, ""
   end
 end
 
@@ -99,12 +100,13 @@ namespace :stretcher do
   task :create_tarball do
     on application_builder_roles do
       within local_build_path do
-        compress_level = fetch(:gzip_compress_level, "")
+        archiver = fetch(:gzip_archiver, "gzip")
+        archiver_option = fetch(:gzip_archiver_option, "")
         execute :mkdir, '-p', "#{local_tarball_path}/#{env.now}"
         execute :tar, '-cf', '-',
           "--exclude tmp", "--exclude spec", "./",
           "| pv -s $( du -sb ./ | awk '{print $1}' )",
-          "| gzip #{compress_level} > #{local_tarball_path}/#{env.now}/#{fetch(:local_tarball_name)}"
+          "| #{archiver} #{archiver_option} > #{local_tarball_path}/#{env.now}/#{fetch(:local_tarball_name)}"
       end
       within local_tarball_path do
         execute :rm, '-f', 'current'
