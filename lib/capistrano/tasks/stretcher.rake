@@ -168,10 +168,11 @@ namespace :stretcher do
   task :cleanup_dirs do
     on application_builder_roles do
       releases = capture(:ls, '-tr', "#{local_tarball_path}", "| grep -v current").split
+      checkouts = capture(:ls, '-tr', "#{local_checkout_path}").split
 
       if releases.count >= fetch(:keep_releases)
         info t(:keeping_releases, host: host.to_s, keep_releases: fetch(:keep_releases), releases: releases.count)
-        directories = (releases - releases.last(fetch(:keep_releases)))
+        directories = ((releases | checkouts) - releases.last(fetch(:keep_releases)))
         unless directories.empty?
           directories_str = directories.map do |release|
             "#{local_tarball_path}/#{release} #{local_checkout_path}/#{release}"
