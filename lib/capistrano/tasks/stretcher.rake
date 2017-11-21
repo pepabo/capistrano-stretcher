@@ -139,6 +139,11 @@ namespace :stretcher do
         src = fetch(:stretcher_src)
         template = File.read(File.expand_path('../../templates/manifest.yml.erb', __FILE__))
         yaml = YAML.load(ERB.new(capture(:cat, "#{local_build_path}/#{fetch(:stretcher_hooks)}")).result(binding))
+        release_timestamp = if fetch(:release_timestamp)
+                              fetch(:release_timestamp)
+                            else
+                              env.now
+                            end
         fetch(:deploy_roles).split(',').each do |role|
           hooks = yaml[role]
           yml = ERB.new(template).result(binding)
