@@ -7,7 +7,7 @@ commands:
     - <%= c %>
     <% end %>
   post:
-    - ln -nfs <%= fetch(:deploy_to) %>/releases/<%= env.now %> <%= fetch(:deploy_to) %>/current
+    - ln -nfs <%= fetch(:deploy_to) %>/releases/<%= release_timestamp %> <%= fetch(:deploy_to) %>/current
     - rm -rf <%= fetch(:deploy_to) %>/current/log
     - ln -nfs <%= fetch(:deploy_to) %>/shared/log <%= fetch(:deploy_to) %>/current/log
     - mkdir -p <%= fetch(:deploy_to) %>/current/tmp
