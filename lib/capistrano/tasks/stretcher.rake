@@ -117,7 +117,7 @@ namespace :stretcher do
 
   task :upload_tarball do
     on application_builder_roles do
-      as 'root' do
+      as fetch(:stretcher_user) || 'root' do
         local_tarball_file = "#{local_tarball_path}/current/#{fetch(:local_tarball_name)}"
 
         if fetch(:stretcher_src).start_with?("s3://")
@@ -133,7 +133,7 @@ namespace :stretcher do
 
   task :create_and_upload_manifest do
     on application_builder_roles do
-      as 'root' do
+      as fetch(:stretcher_user) || 'root' do
         failure_message = "Deploy failed at *$(hostname)* :fire:"
         checksum = capture("openssl sha256 #{local_tarball_path}/current/#{fetch(:local_tarball_name)} | gawk -F' ' '{print $2}'").chomp
         src = fetch(:stretcher_src)
