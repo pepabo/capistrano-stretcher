@@ -4,7 +4,7 @@ $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 
 Gem::Specification.new do |spec|
   spec.name          = "capistrano-stretcher"
-  spec.version       = "0.5.2"
+  spec.version       = "0.5.3"
   spec.authors       = ["SHIBATA Hiroshi", "Uchio Kondo"]
   spec.email         = ["hsbt@ruby-lang.org", "udzura@udzura.jp"]
 
