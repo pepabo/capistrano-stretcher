@@ -1,6 +1,7 @@
 # -*- coding: utf-8; mode: ruby -*-
 require 'erb'
 require 'yaml'
+require 'tempfile'
 
 namespace :load do
   task :defaults do
